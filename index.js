@@ -203,6 +203,28 @@ async function run() {
         res.send(result);
     })
 
+    app.patch('/completetasks/:id', verifyJWT, async (req, res) => {
+        const id = req.params.id;
+        const taskComplete = req.body.taskComplete
+        console.log(taskComplete)
+        const query = { _id: ObjectId(id) }
+        const updatedDoc = {
+            $set:{
+                taskComplete: taskComplete
+            }
+        }
+        const result = await tasksCollection.updateOne(query, updatedDoc);
+        res.send(result);
+    })
+
+    app.get("/completetasks/:email", async (req, res) => {
+        const email = req.params.email;
+        console.log(email);
+        const query = { email, taskComplete:true };
+        const result = await tasksCollection.find(query).toArray();
+        res.send(result);
+    });
+
     app.get("/alltasks/:email", async (req, res) => {
         const email = req.params.email;
         console.log(email);
