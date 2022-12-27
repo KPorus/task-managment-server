@@ -163,12 +163,12 @@ async function run() {
     });
 
     // all tasks
-    app.get("/alltasks/:id", async (req, res) => {
-      const email = req.params.email;
-      const query = { email };
-      const user = await userCollection.findOne(query);
-      res.send({ isSeller: user?.role === "Seller" });
-    });
+    // app.get("/alltasks/:id", async (req, res) => {
+    //   const email = req.params.email;
+    //   const query = { email };
+    //   const user = await tasksCollection.findOne(query);
+    //   res.send({ isSeller: user?.role === "Seller" });
+    // });
 
     
     app.get("/userProduct/samsung", async (req, res) => {
@@ -189,18 +189,32 @@ async function run() {
       res.send(result);
     });
     // all tasks
+    app.patch('/alltasks/:id', verifyJWT, async (req, res) => {
+        const id = req.params.id;
+        const taskComplete = req.body.taskComplete
+        console.log(taskComplete)
+        const query = { _id: ObjectId(id) }
+        const updatedDoc = {
+            $set:{
+                taskComplete: taskComplete
+            }
+        }
+        const result = await tasksCollection.updateOne(query, updatedDoc);
+        res.send(result);
+    })
+
     app.get("/alltasks/:email", async (req, res) => {
         const email = req.params.email;
         console.log(email);
         const query = { email };
-        const result = await userProductCollection.find(query).toArray();
+        const result = await tasksCollection.find(query).toArray();
         res.send(result);
     });
     // all tasks
     app.delete("/alltasks/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
-      const result = await userProductCollection.deleteOne(filter);
+      const result = await tasksCollection.deleteOne(filter);
       res.send(result);
     });
     // all task
