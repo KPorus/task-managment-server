@@ -103,14 +103,14 @@ async function run() {
         res.send(result);
     });
 
-    app.delete("/completetasks/:id", async (req, res) => {
+    app.delete("/completetasks/:id",verifyJWT, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const result = await tasksCollection.deleteOne(filter);
       res.send(result);
     });
 
-    app.get("/alltasks/:email", async (req, res) => {
+    app.get("/alltasks/:email",verifyJWT, async (req, res) => {
         const email = req.params.email;
         console.log(email);
         const query = { email };
