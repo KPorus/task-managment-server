@@ -66,128 +66,6 @@ async function run() {
       res.send("I am watching. caught you");
     });
 
-    // user profie
-
-    app.post("/users", async (req, res) => {
-      const user = req.body;
-      const result = await userCollection.insertOne(user);
-      res.send(result);
-    });
-
-    app.get("/user/:email", async (req, res) => {
-      const email = req.params.email;
-      const query = { email };
-      const result = await userCollection.find(query).toArray();
-      console.log(result.length);
-      if (result.length > 1) {
-        let userOne = result[0];
-        console.log(userOne);
-        res.send(userOne);
-        return;
-      } else {
-        res.send(result[0]);
-      }
-    });
-
-    // buyer user api
-
-    app.post("/orders", async (req, res) => {
-      const order = req.body;
-      console.log(order);
-      const result = await ordersCollection.insertOne(order);
-      res.send(result);
-    });
-
-    app.get("/orders/:email", async (req, res) => {
-      const email = req.params.email;
-      const filter = { email };
-      const result = await ordersCollection.find(filter).toArray();
-      res.send(result);
-    });
-
-    app.delete("/orders/:id", verifyJWT, async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const result = await ordersCollection.deleteOne(filter);
-      res.send(result);
-    });
-
-    // admin user api
-
-    app.get("/users/admin/:email", async (req, res) => {
-      const email = req.params.email;
-      const query = { email };
-      const user = await userCollection.findOne(query);
-      res.send({ isAdmin: user?.role === "Admin" });
-    });
-
-    app.get("/allProduct", async (req, res) => {
-      const query = {};
-      const result = await userProductCollection.find(query).toArray();
-      res.send(result);
-    });
-
-    app.get("/seller", async (req, res) => {
-      const query = { role: "Seller" };
-      const user = await userCollection.find(query).toArray();
-      res.send(user);
-    });
-
-    app.delete("/seller/:id", verifyJWT, async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const result = await userCollection.deleteOne(filter);
-      res.send(result);
-    });
-
-    app.get("/buyer", async (req, res) => {
-      const query = { role: "Buyer" };
-      const user = await userCollection.find(query).toArray();
-      res.send(user);
-    });
-
-    app.delete("/buyer/:id", verifyJWT, async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const result = await userCollection.deleteOne(filter);
-      res.send(result);
-    });
-
-    // seller user api
-
-    app.get("/sellerOrder/:email", async (req, res) => {
-      const sellerEmail = req.params.email;
-      const filter = { sellerEmail };
-      const result = await ordersCollection.find(filter).toArray();
-      res.send(result);
-    });
-
-    // all tasks
-    // app.get("/alltasks/:id", async (req, res) => {
-    //   const email = req.params.email;
-    //   const query = { email };
-    //   const user = await tasksCollection.findOne(query);
-    //   res.send({ isSeller: user?.role === "Seller" });
-    // });
-
-    
-    app.get("/userProduct/samsung", async (req, res) => {
-      const query = { brandName: "samsung" };
-      const result = await userProductCollection.find(query).toArray();
-      res.send(result);
-    });
-    
-    app.get("/userProduct/apple", async (req, res) => {
-      const query = { brandName: "apple" };
-      const result = await userProductCollection.find(query).toArray();
-      res.send(result);
-    });
-
-    app.get("/userProduct/walton", async (req, res) => {
-      const query = { brandName: "walton" };
-      const result = await userProductCollection.find(query).toArray();
-      res.send(result);
-    });
     // all tasks
     app.patch('/alltasks/:id', verifyJWT, async (req, res) => {
         const id = req.params.id;
@@ -217,12 +95,19 @@ async function run() {
         res.send(result);
     })
 
-    app.get("/completetasks/:email", async (req, res) => {
+    app.get("/completetasks/:email",verifyJWT, async (req, res) => {
         const email = req.params.email;
         console.log(email);
         const query = { email, taskComplete:true };
         const result = await tasksCollection.find(query).toArray();
         res.send(result);
+    });
+
+    app.delete("/completetasks/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await tasksCollection.deleteOne(filter);
+      res.send(result);
     });
 
     app.get("/alltasks/:email", async (req, res) => {
