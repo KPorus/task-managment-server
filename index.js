@@ -70,7 +70,6 @@ async function run() {
     app.patch('/alltasks/:id', verifyJWT, async (req, res) => {
         const id = req.params.id;
         const taskComplete = req.body.taskComplete
-        console.log(taskComplete)
         const query = { _id: ObjectId(id) }
         const updatedDoc = {
             $set:{
@@ -80,11 +79,22 @@ async function run() {
         const result = await tasksCollection.updateOne(query, updatedDoc);
         res.send(result);
     })
+    app.patch('/updatetasks/:id', verifyJWT, async (req, res) => {
+        const id = req.params.id;
+        const details = req.body.details
+        const query = { _id: ObjectId(id) }
+        const updatedDoc = {
+            $set:{
+                details: details
+            }
+        }
+        const result = await tasksCollection.updateOne(query, updatedDoc);
+        res.send(result);
+    })
 
     app.patch('/completetasks/:id', verifyJWT, async (req, res) => {
         const id = req.params.id;
         const taskComplete = req.body.taskComplete
-        console.log(taskComplete)
         const query = { _id: ObjectId(id) }
         const updatedDoc = {
             $set:{
@@ -97,7 +107,6 @@ async function run() {
 
     app.get("/completetasks/:email",verifyJWT, async (req, res) => {
         const email = req.params.email;
-        console.log(email);
         const query = { email, taskComplete:true };
         const result = await tasksCollection.find(query).toArray();
         res.send(result);
